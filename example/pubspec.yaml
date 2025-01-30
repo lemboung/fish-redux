@@ -10,7 +10,7 @@ description: Demonstrates how to use the fish_redux.
 version: 1.0.0+1
 
 environment:
-    sdk: '3.7.0-209.1.beta'
+    sdk: '>=3.2.0 <3.8.0'
 
 dependencies:
     fish_redux:
