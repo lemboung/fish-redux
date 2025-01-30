@@ -26,7 +26,7 @@ class PageState extends ItemListLike
   String getItemType(int index) => 'toDo';
 
   @override
-  int get itemCount => toDos?.length ?? 0;
+  int get itemCount => toDos.length ?? 0;
 
   @override
   ItemListLike updateItemData(int index, Object data, bool isStateCopied) {

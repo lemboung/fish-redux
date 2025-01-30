@@ -16,8 +16,7 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
     Effect<T> effect,
     Dependencies<T> dependencies,
     @deprecated Object Function(T) key,
-  })  : assert(adapter != null),
-        assert(dependencies?.adapter == null,
+  })  : assert(dependencies.adapter == null,
             'Unexpected dependencies.list for Adapter.'),
         _adapter = adapter,
         super(
@@ -32,9 +31,9 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
   @override
   ListAdapter buildAdapter(ContextSys<T> ctx) =>
       ctx.enhancer
-          ?.adapterEnhance(protectedAdapter, this, ctx.store)
-          ?.call(ctx.state, ctx.dispatch, ctx) ??
-      protectedAdapter?.call(ctx.state, ctx.dispatch, ctx);
+          .adapterEnhance(protectedAdapter, this, ctx.store)
+          .call(ctx.state, ctx.dispatch, ctx) ??
+      protectedAdapter.call(ctx.state, ctx.dispatch, ctx);
 
   @override
   ContextSys<T> createContext(
@@ -44,7 +43,6 @@ abstract class Adapter<T> extends Logic<T> implements AbstractAdapter<T> {
     @required Enhancer<Object> enhancer,
     @required DispatchBus bus,
   }) {
-    assert(bus != null && enhancer != null);
     return AdapterContext<T>(
       logic: this,
       store: store,
@@ -64,8 +62,7 @@ class AdapterContext<T> extends LogicContext<T> {
     @required Get<T> getState,
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
-  })  : assert(bus != null && enhancer != null),
-        super(
+  })  : super(
           logic: logic,
           store: store,
           buildContext: buildContext,

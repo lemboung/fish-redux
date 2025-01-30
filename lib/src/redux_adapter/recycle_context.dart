@@ -80,7 +80,6 @@ mixin RecycleContextMixin<T> implements AbstractAdapter<T> {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   }) {
-    assert(bus != null && enhancer != null);
 
     return RecycleContext<T>(
       logic: this,
@@ -95,7 +94,7 @@ mixin RecycleContextMixin<T> implements AbstractAdapter<T> {
 
 ListAdapter combineListAdapters(Iterable<ListAdapter> adapters) {
   final List<ListAdapter> list = adapters
-      .where((ListAdapter e) => e != null && e.itemCount > 0)
+      .where((ListAdapter e) => e.itemCount > 0)
       .toList(growable: false);
 
   if (list.every((ListAdapter e) => e.itemCount == 1)) {

@@ -15,26 +15,24 @@ class AutoDispose {
   final _Fields _fields = _Fields();
 
   void visit(void Function(AutoDispose) visitor) =>
-      _fields.children?.forEach(visitor);
+      _fields.children.forEach(visitor);
 
   bool get isDisposed => _fields.isDisposed;
 
   void dispose() {
     /// dispose all children
-    if (_fields.children != null) {
-      final List<AutoDispose> copy = _fields.children.toList(growable: false);
-      for (AutoDispose child in copy) {
-        child.dispose();
-      }
-      _fields.children = null;
+    final List<AutoDispose> copy = _fields.children.toList(growable: false);
+    for (AutoDispose child in copy) {
+      child.dispose();
     }
-
+    _fields.children = null;
+  
     /// Cut off the connection with parent.
-    _fields.parent?._fields?.children?.remove(this);
+    _fields.parent._fields.children.remove(this);
     _fields.parent = null;
 
     /// The hook function of onDisposed is triggered.
-    _fields.onDisposed?.call();
+    _fields.onDisposed.call();
     _fields.onDisposed = null;
 
     /// Status marked as isDisposed = true.
@@ -44,7 +42,7 @@ class AutoDispose {
   void onDisposed(void Function() onDisposed) {
     assert(_fields.onDisposed == null);
     if (_fields.isDisposed) {
-      onDisposed?.call();
+      onDisposed.call();
     } else {
       _fields.onDisposed = onDisposed;
     }
@@ -58,19 +56,15 @@ class AutoDispose {
       return;
     }
 
-    if (newParent != null && newParent.isDisposed) {
+    if (newParent.isDisposed) {
       dispose();
       return;
     }
 
-    if (newParent != null) {
-      newParent._fields.children ??= <AutoDispose>{};
-      newParent._fields.children.add(this);
-    }
-    if (oldParent != null) {
+    newParent._fields.children ??= <AutoDispose>{};
+    newParent._fields.children.add(this);
       oldParent._fields.children.remove(this);
-    }
-    _fields.parent = newParent;
+      _fields.parent = newParent;
   }
 
   AutoDispose registerOnDisposed(void Function() onDisposed) => AutoDispose()

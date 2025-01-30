@@ -92,7 +92,7 @@ EffectMiddleware<T> _pageAnalyticsMiddleware<T>({String tag = 'redux'}) {
         if (logic is Page<dynamic, dynamic> && action.type is Lifecycle) {
           print('${logic.runtimeType} ${action.type.toString()} ');
         }
-        return effect?.call(action, ctx);
+        return effect.call(action, ctx);
       };
     };
   };

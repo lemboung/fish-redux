@@ -24,7 +24,7 @@ abstract class Logic<T> implements AbstractLogic<T> {
   Effect<T> get protectedEffect => _effect;
   Dependencies<T> get protectedDependencies => _dependencies;
   Reducer<T> get protectedDependenciesReducer =>
-      protectedDependencies?.createReducer();
+      protectedDependencies.createReducer();
   Object Function(T state) get protectedKey => _key;
 
   /// Used as function cache to improve operational efficiency
@@ -45,9 +45,9 @@ abstract class Logic<T> implements AbstractLogic<T> {
   })  : _reducer = reducer,
         _filter = filter,
         _effect = effect,
-        _dependencies = dependencies?.trim(),
+        _dependencies = dependencies.trim(),
         // ignore:deprecated_member_use_from_same_package
-        assert(isAssignFrom<T, StateKey>() == false || key == null,
+        assert(isAssignFrom<T, StateKey>() == false,
             'Implements [StateKey] in T instead of using key in Logic.'),
         _key = isAssignFrom<T, StateKey>()
             // ignore:avoid_as
@@ -80,7 +80,7 @@ abstract class Logic<T> implements AbstractLogic<T> {
 
   @override
   Object onReducer(Object state, Action action) =>
-      cache<Reducer<T>>('onReducer', createReducer)?.call(state, action) ??
+      cache<Reducer<T>>('onReducer', createReducer).call(state, action) ??
       state;
 
   @override
@@ -109,11 +109,11 @@ abstract class Logic<T> implements AbstractLogic<T> {
       helper.createDispatch<T>(effectDispatch, nextDispatch, ctx);
 
   @override
-  Object key(T state) => _key?.call(state) ?? ValueKey<Type>(runtimeType);
+  Object key(T state) => _key.call(state) ?? ValueKey<Type>(runtimeType);
 
   @override
-  Dependent<T> slot(String type) => protectedDependencies?.slot(type);
+  Dependent<T> slot(String type) => protectedDependencies.slot(type);
 
   @override
-  Dependent<T> adapterDep() => protectedDependencies?.adapter;
+  Dependent<T> adapterDep() => protectedDependencies.adapter;
 }

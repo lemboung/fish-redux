@@ -4,11 +4,11 @@ import 'dart:core';
 class Collections {
   /// Wrap List.reduce with a check list is null or empty.
   static E reduce<E>(List<E> list, E combine(E e0, E e1)) =>
-      (list == null || list.isEmpty) ? null : list.reduce(combine);
+      (list.isEmpty) ? null : list.reduce(combine);
 
   /// Wrap List.fold with a check list is null or empty.
   static T fold<T, E>(T init, List<E> list, T combine(T e0, E e1)) =>
-      (list == null || list.isEmpty) ? init : list.fold(init, combine);
+      (list.isEmpty) ? init : list.fold(init, combine);
 
   /// Flatten list
   /// For example:
@@ -26,7 +26,7 @@ class Collections {
       <T>[]..addAll(a ?? <T>[])..addAll(b ?? <T>[]);
 
   static List<T> clone<T>(Iterable<T> a) =>
-      (a == null || a.isEmpty) ? <T>[] : (<T>[]..addAll(a));
+      (a.isEmpty) ? <T>[] : (<T>[]..addAll(a));
 
   /// Cast map to list
   /// Map<String, String> map = {'key0': 'a', 'key1': 'b', 'key2': 'c'};
@@ -48,26 +48,22 @@ class Collections {
   /// print(list)                       // [1, 2, null, 3, null]
   /// print(Collections.compact(list)); // [1, 2, 3]
   static List<T> compact<T>(Iterable<T> list, {bool growable = true}) =>
-      list?.where((T e) => e != null)?.toList(growable: growable);
+      list.where((T e) => e != null).toList(growable: growable);
 
   /// Check if an Object is Empty.
   static bool isEmpty(Object value) {
-    if (value == null) {
-      return true;
+    if (value is String) {
+      return value.isEmpty;
+    } else if (value is List) {
+      return value.isEmpty;
+    } else if (value is Map) {
+      return value.isEmpty;
+    } else if (value is Set) {
+      return value.isEmpty;
     } else {
-      if (value is String) {
-        return value.isEmpty;
-      } else if (value is List) {
-        return value.isEmpty;
-      } else if (value is Map) {
-        return value.isEmpty;
-      } else if (value is Set) {
-        return value.isEmpty;
-      } else {
-        return false;
-      }
+      return false;
     }
-  }
+    }
 
   static bool isNotEmpty(Object value) => !isEmpty(value);
 }

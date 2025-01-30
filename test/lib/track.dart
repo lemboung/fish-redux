@@ -7,7 +7,9 @@ class Track {
     tags ??= <String>[];
 
     final Track tracer = Track();
-    tags.forEach((String tag) => tracer.append(tag));
+    for (String tag in tags) {
+      tracer.append(tag);
+    }
 
     return tracer;
   }
@@ -16,7 +18,9 @@ class Track {
     tags ??= <Pin>[];
 
     final Track tracer = Track();
-    tags.forEach((Pin pin) => tracer.append(pin.tag, pin.value));
+    for (Pin pin in tags) {
+      tracer.append(pin.tag, pin.value);
+    }
 
     return tracer;
   }
@@ -26,13 +30,14 @@ class Track {
   }
 
   int countOfTag(String tag) =>
-      _pins.fold<int>(0, (count, pin) => pin.tag == tag ? count + 1 : count);
+      _pins.fold<int>(0, (int count, Pin pin) => pin.tag == tag ? count + 1 : count);
 
-  void remove(String tag) => _pins.retainWhere((pin)=>pin.tag == tag);
+  void remove(String tag) => _pins.retainWhere((Pin pin)=>pin.tag == tag);
 
+  @override
   String toString() => _pins
-      .map<String>((node) => node.toString())
-      .fold<String>('', (prev, now) => '$prev\n=>$now');
+      .map<String>((Pin node) => node.toString())
+      .fold<String>('', (String prev, String now) => '$prev\n=>$now');
 
   @override
   bool operator ==(dynamic other) {
@@ -62,7 +67,7 @@ class Pin {
         value = value is Function ? value() : value;
 
   @override
-  String toString() => '$tag<${value?.toString()}>';
+  String toString() => '$tag<${value.toString()}>';
 
   @override
   bool operator ==(dynamic other) {

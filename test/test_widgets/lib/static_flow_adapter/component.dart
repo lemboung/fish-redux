@@ -22,7 +22,7 @@ Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
                   color: Colors.yellow,
                   child: Text(
                     toDo.title,
-                    style: TextStyle(fontSize: 16.0),
+                    style: const TextStyle(fontSize: 16.0),
                   ),
                   alignment: AlignmentDirectional.centerStart,
                 ),
@@ -38,7 +38,7 @@ Widget toDoView(Todo toDo, Dispatch dispatch, ViewService viewService) {
                   padding: const EdgeInsets.all(8.0),
                   height: 60.0,
                   color: Colors.grey,
-                  child: Text(toDo.desc, style: TextStyle(fontSize: 14.0)),
+                  child: Text(toDo.desc, style: const TextStyle(fontSize: 14.0)),
                   alignment: AlignmentDirectional.centerStart,
                 ),
                 onTap: () {
@@ -78,13 +78,13 @@ bool toDoEffect(Action action, Context<Todo> ctx) {
   if (action.type == ToDoAction.onEdit) {
     print('onEdit');
 
-    Todo toDo = ctx.state.clone();
+    final Todo toDo = ctx.state.clone();
     toDo.desc = '${toDo.desc}-effect';
 
     ctx.dispatch(Action(ToDoAction.edit, payload: toDo));
     return true;
   } else if (action.type == ToDoAction.onBroadcast) {
-    ctx.broadcastEffect(Action(ToDoAction.broadcast));
+    ctx.broadcastEffect(const Action(ToDoAction.broadcast));
     return true;
   }
 
@@ -93,7 +93,7 @@ bool toDoEffect(Action action, Context<Todo> ctx) {
 
 dynamic toDoEffectAsync(Action action, Context<Todo> ctx) {
   if (action.type == ToDoAction.onEdit) {
-    return Future.delayed(Duration(seconds: 1), () => toDoEffect(action, ctx));
+    return Future.delayed(const Duration(seconds: 1), () => toDoEffect(action, ctx));
   }
 
   return null;

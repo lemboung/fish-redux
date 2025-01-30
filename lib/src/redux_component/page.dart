@@ -47,8 +47,7 @@ abstract class Page<T, P> extends Component<T> {
     List<ViewMiddleware<T>> viewMiddleware,
     List<EffectMiddleware<T>> effectMiddleware,
     List<AdapterMiddleware<T>> adapterMiddleware,
-  })  : assert(initState != null),
-        _initState = initState,
+  })  : _initState = initState,
         enhancer = EnhancerDefault<T>(
           middleware: middleware,
           viewMiddleware: viewMiddleware,
@@ -199,9 +198,7 @@ class PageProvider extends InheritedWidget {
     @required this.extra,
     @required Widget child,
     Key key,
-  })  : assert(store != null),
-        assert(child != null),
-        super(child: child, key: key);
+  })  : super(child: child, key: key);
 
   static PageProvider tryOf(BuildContext context) {
     final PageProvider provider =

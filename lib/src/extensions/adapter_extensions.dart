@@ -1,11 +1,6 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/foundation.dart';
 
-import '../redux/basic.dart';
-import '../redux_adapter/redux_adapter.dart';
-import '../redux_component/redux_component.dart';
-import '../redux_connector/redux_connector.dart';
-import 'connector_extensions.dart';
 
 class SimpleFlowAdapter<T> extends FlowAdapter<T> {
   SimpleFlowAdapter({
@@ -111,7 +106,6 @@ FlowAdapterView<T> _buildByDynamic<T>({
         assert(index < list.length);
         if (index < list.length) {
           final ItemBean ib = list[index];
-          assert(ib != null);
           return ConnHelper.join<T, Object>(
             ConnHelper.to<T, List<ItemBean>, Object>(
               connector,

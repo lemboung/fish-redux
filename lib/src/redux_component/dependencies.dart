@@ -10,27 +10,25 @@ class Dependencies<T> {
   Dependencies({
     this.slots,
     this.adapter,
-  }) : assert(adapter == null || adapter.isAdapter(),
+  }) : assert(adapter.isAdapter(),
             'The dependent must contains adapter.');
 
   Reducer<T> createReducer() {
     final List<SubReducer<T>> subs = <SubReducer<T>>[];
-    if (slots != null && slots.isNotEmpty) {
+    if (slots.isNotEmpty) {
       subs.addAll(slots.entries.map<SubReducer<T>>(
         (MapEntry<String, Dependent<T>> entry) =>
             entry.value.createSubReducer(),
       ));
     }
 
-    if (adapter != null) {
-      subs.add(adapter.createSubReducer());
-    }
-
+    subs.add(adapter.createSubReducer());
+  
     return combineReducers(<Reducer<T>>[combineSubReducers(subs)]);
   }
 
   Dependent<T> slot(String type) => slots[type];
 
   Dependencies<T> trim() =>
-      adapter != null || slots?.isNotEmpty == true ? this : null;
+      adapter != null || slots.isNotEmpty == true ? this : null;
 }

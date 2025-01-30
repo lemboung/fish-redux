@@ -24,7 +24,7 @@ Widget toDoView(Todo toDo, BuildContext context, Dispatch dispatch) {
                   color: Colors.yellow,
                   child: Text(
                     toDo.title,
-                    style: TextStyle(fontSize: 16.0),
+                    style: const TextStyle(fontSize: 16.0),
                   ),
                   alignment: AlignmentDirectional.centerStart,
                 ),
@@ -39,7 +39,7 @@ Widget toDoView(Todo toDo, BuildContext context, Dispatch dispatch) {
                   padding: const EdgeInsets.all(8.0),
                   height: 60.0,
                   color: Colors.grey,
-                  child: Text(toDo.desc, style: TextStyle(fontSize: 14.0)),
+                  child: Text(toDo.desc, style: const TextStyle(fontSize: 14.0)),
                   alignment: AlignmentDirectional.centerStart,
                 ),
                 onTap: () {
@@ -86,8 +86,8 @@ Widget toDoListView(
     children: <Widget>[
       Expanded(
           child: ListView.builder(
-        itemBuilder: (context, index) {
-          Todo toDo = state.list[index];
+        itemBuilder: (BuildContext context, int index) {
+          final Todo toDo = state.list[index];
           return toDoView(toDo, context, dispatch);
         },
         itemCount: state.list.length,
@@ -97,33 +97,33 @@ Widget toDoListView(
           Expanded(
               child: GestureDetector(
             child: Container(
-              key: ValueKey('Add'),
+              key: const ValueKey('Add'),
               height: 68.0,
               color: Colors.green,
               alignment: AlignmentDirectional.center,
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
             onTap: () {
               print('dispatch Add');
-              dispatch(Action(ToDoListAction.onAdd));
+              dispatch(const Action(ToDoListAction.onAdd));
             },
           )),
           Expanded(
               child: GestureDetector(
                   child: Container(
-                    key: ValueKey('Error'),
+                    key: const ValueKey('Error'),
                     height: 68.0,
                     color: Colors.red,
                     alignment: AlignmentDirectional.center,
-                    child: Text('Error'),
+                    child: const Text('Error'),
                   ),
                   onTap: () {
                     print('dispatch KnowException');
-                    dispatch(Action(ToDoListAction.onKnowException));
+                    dispatch(const Action(ToDoListAction.onKnowException));
                   },
                   onLongPress: () {
                     print('dispatch UnKnowException');
-                    dispatch(Action(ToDoListAction.onUnKnowException));
+                    dispatch(const Action(ToDoListAction.onUnKnowException));
                   }))
         ],
       )
@@ -142,9 +142,8 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
     assert(action.payload is Todo);
 
     Todo toDo = ctx.state.list
-        .firstWhere((i) => i.id == action.payload.id, orElse: () => null);
+        .firstWhere((Todo i) => i.id == action.payload.id, orElse: () => null);
 
-    assert(toDo != null);
 
     toDo = toDo.clone();
     toDo.desc = '${toDo.desc}-effect';
@@ -166,7 +165,7 @@ dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
       action.type == ToDoListAction.onKnowException ||
       action.type == ToDoListAction.onUnKnowException) {
     return Future.delayed(
-        Duration(seconds: 1), () => toDoListEffect(action, ctx));
+        const Duration(seconds: 1), () => toDoListEffect(action, ctx));
   }
 
   return null;
@@ -176,22 +175,22 @@ ToDoList toDoListReducer(ToDoList state, Action action) {
   print('onReduce:${action.type}');
   if (!(action.payload is Todo)) return state;
 
-  Todo item = action.payload as Todo;
+  final Todo item = action.payload as Todo;
 
   if (action.type == ToDoListAction.add) {
     return state.clone()..list.add(item);
   } else if (action.type == ToDoListAction.markDone) {
     return state.clone()
       ..list
-          .firstWhere((toDo) => toDo.id == item.id, orElse: () => null)
-          ?.isDone = true;
+          .firstWhere((Todo toDo) => toDo.id == item.id, orElse: () => null)
+          .isDone = true;
   } else if (action.type == ToDoListAction.remove) {
-    return state.clone()..list.removeWhere((toDo) => toDo.id == item.id);
+    return state.clone()..list.removeWhere((Todo toDo) => toDo.id == item.id);
   } else if (action.type == ToDoListAction.edit) {
     return state.clone()
       ..list
-          .firstWhere((toDo) => toDo.id == item.id, orElse: () => null)
-          ?.desc = item.desc;
+          .firstWhere((Todo toDo) => toDo.id == item.id, orElse: () => null)
+          .desc = item.desc;
   } else {
     return state;
   }
@@ -219,10 +218,9 @@ Composable<Dispatch> toDoListMiddleware({
             assert(action.payload is Todo);
 
             Todo toDo = getState().list.firstWhere(
-                (i) => i.id == action.payload.id,
+                (Todo i) => i.id == action.payload.id,
                 orElse: () => null);
 
-            assert(toDo != null);
 
             toDo = toDo.clone();
             toDo.desc = '${toDo.desc}-middleware';
@@ -234,7 +232,7 @@ Composable<Dispatch> toDoListMiddleware({
         };
 
 const Map pageInitParams = <String, dynamic>{
-  'list': [
+  'list': <Map<String, dynamic>>[
     <String, dynamic>{
       'id': '0',
       'title': 'title-0',
@@ -267,7 +265,7 @@ ToDoList initState(Map map) => ToDoList.fromMap(map);
 class PageWrapper extends StatelessWidget {
   final Widget child;
 
-  PageWrapper(this.child);
+  const PageWrapper(this.child);
 
   @override
   Widget build(BuildContext context) {
@@ -283,5 +281,5 @@ Widget createPageWidget(BuildContext context) {
       effect: toDoListEffectAsync,
 //      shouldUpdate: forbidRefreshWhenAddOrRemove,
 //      onError: toDoListErrorHandler,
-      middleware: [toDoListMiddleware]).buildPage(pageInitParams);
+      middleware: <Middleware<ToDoList>>const <Composable<Dispatch> Function({Dispatch dispatch, Get<ToDoList> getState})>[toDoListMiddleware]).buildPage(pageInitParams);
 }

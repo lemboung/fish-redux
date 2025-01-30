@@ -1,8 +1,6 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action, Page;
 
-import '../redux/redux.dart';
-import 'basic.dart';
 
 class _Dependent<T, P> implements Dependent<T> {
   final AbstractConnector<T, P> connector;
@@ -12,9 +10,7 @@ class _Dependent<T, P> implements Dependent<T> {
   _Dependent({
     @required this.logic,
     @required this.connector,
-  })  : assert(logic != null),
-        assert(connector != null),
-        subReducer = logic.createReducer != null
+  })  : subReducer = logic.createReducer != null
             ? connector.subReducer(logic.createReducer())
             : null;
 
@@ -28,7 +24,6 @@ class _Dependent<T, P> implements Dependent<T> {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   }) {
-    assert(bus != null && enhancer != null);
     assert(isComponent(), 'Unexpected type of ${logic.runtimeType}.');
     final AbstractComponent<P> component = logic;
     return component.buildComponent(
@@ -57,7 +52,6 @@ class _Dependent<T, P> implements Dependent<T> {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   }) {
-    assert(bus != null && enhancer != null);
     return logic.createContext(
       store,
       buildContext,

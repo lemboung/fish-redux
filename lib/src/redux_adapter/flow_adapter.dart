@@ -1,8 +1,5 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action, Page;
-import '../redux/redux.dart';
-import '../redux_component/redux_component.dart';
-import 'recycle_context.dart';
 
 class FlowAdapter<T> extends Logic<T>
     with RecycleContextMixin<T>
@@ -14,8 +11,7 @@ class FlowAdapter<T> extends Logic<T>
     Reducer<T> reducer,
     Effect<T> effect,
     @deprecated Object Function(T state) key,
-  })  : assert(view != null),
-        _flowDependencies =
+  })  : _flowDependencies =
             FlowDependencies<T>(_memoize<T, DependentArray<T>>(view)),
         super(
           reducer: reducer,
@@ -42,10 +38,6 @@ class FlowAdapter<T> extends Logic<T>
     final int count = depArray.length;
     for (int index = 0; index < count; index++) {
       final Dependent<T> dependent = depArray[index];
-
-      if (dependent == null) {
-        continue;
-      }
 
       if (dependent.isAdapter()) {
         /// use dependent's key
@@ -88,7 +80,7 @@ class DependentArray<T> {
   final int length;
 
   DependentArray({@required this.builder, @required this.length})
-      : assert(builder != null && length >= 0);
+      : assert(length >= 0);
 
   DependentArray.fromList(List<Dependent<T>> list)
       : this(builder: (int index) => list[index], length: list.length);
@@ -107,17 +99,13 @@ class FlowDependencies<T> {
         T copy = state;
         bool hasChanged = false;
         final DependentArray<T> list = build(state);
-        if (list != null) {
-          for (int i = 0; i < list.length; i++) {
-            final Dependent<T> dep = list[i];
-            final SubReducer<T> subReducer = dep?.createSubReducer();
-            if (subReducer != null) {
-              copy = subReducer(copy, action, hasChanged);
-              hasChanged = hasChanged || copy != state;
-            }
-          }
-        }
-        return copy;
+        for (int i = 0; i < list.length; i++) {
+          final Dependent<T> dep = list[i];
+          final SubReducer<T> subReducer = dep.createSubReducer();
+          copy = subReducer(copy, action, hasChanged);
+          hasChanged = hasChanged || copy != state;
+                }
+              return copy;
       };
 }
 

@@ -94,7 +94,7 @@ Store<T> createStore<T>(T preloadedState, Reducer<T> reducer,
         : _createStore(preloadedState, reducer);
 
 StoreEnhancer<T> composeStoreEnhancer<T>(List<StoreEnhancer<T>> enhancers) =>
-    enhancers == null || enhancers.isEmpty
+    enhancers.isEmpty
         ? null
         : enhancers.reduce((StoreEnhancer<T> previous, StoreEnhancer<T> next) =>
             (StoreCreator<T> creator) => next(previous(creator)));

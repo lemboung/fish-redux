@@ -27,14 +27,13 @@ class StaticFlowAdapter<T> extends Logic<T>
     ///   Object key() => _key;
     /// }
     @deprecated Object Function(T) key,
-  })  : assert(slots != null),
-        _slots = Collections.compact(slots),
+  })  : _slots = Collections.compact(slots),
         super(
           reducer: combineReducers(<Reducer<T>>[
             reducer,
             combineSubReducers(
               slots.map(
-                (Dependent<T> dependent) => dependent?.createSubReducer(),
+                (Dependent<T> dependent) => dependent.createSubReducer(),
               ),
             )
           ]),
@@ -56,31 +55,28 @@ class StaticFlowAdapter<T> extends Logic<T>
       final Object subObject = dependent.subGetter(recycleCtx.getState)();
       if (!dependent.isComponent()) {
         /// precondition is subObject != null
-        if (subObject != null) {
-          /// use index of key
-          final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(i, () {
-            return dependent.createContext(
-              recycleCtx.store,
-              recycleCtx.context,
-              recycleCtx.getState,
-              bus: recycleCtx.bus,
-              enhancer: recycleCtx.enhancer,
-            );
-          });
-
-          /// hack to reduce adapter's rebuilding
-          adapters.add(memoizeListAdapter(dependent, subCtx));
-        }
-      } else if (subObject != null) {
-        adapters.add(ListAdapter((BuildContext buildContext, int index) {
-          return dependent.buildComponent(
+        /// use index of key
+        final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(i, () {
+          return dependent.createContext(
             recycleCtx.store,
+            recycleCtx.context,
             recycleCtx.getState,
             bus: recycleCtx.bus,
             enhancer: recycleCtx.enhancer,
           );
-        }, 1));
-      }
+        });
+
+        /// hack to reduce adapter's rebuilding
+        adapters.add(memoizeListAdapter(dependent, subCtx));
+            } else      adapters.add(ListAdapter((BuildContext buildContext, int index) {
+        return dependent.buildComponent(
+          recycleCtx.store,
+          recycleCtx.getState,
+          bus: recycleCtx.bus,
+          enhancer: recycleCtx.enhancer,
+        );
+      }, 1));
+    
     }
     recycleCtx.cleanUnused();
 

@@ -16,7 +16,7 @@ Widget toDoListView(
     children: <Widget>[
       Expanded(
           child: ListView.builder(
-        itemBuilder: (context, index) {
+        itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             return viewService.buildComponent('toDo0');
           } else if (index == 1) {
@@ -26,7 +26,7 @@ Widget toDoListView(
           } else if (index == 3) {
             return viewService.buildComponent('toDo3');
           } else {
-            Todo toDo = state.list[index];
+            final Todo toDo = state.list[index];
             return Container(
               padding: const EdgeInsets.all(8.0),
               margin: const EdgeInsets.all(8.0),
@@ -43,15 +43,15 @@ Widget toDoListView(
           Expanded(
               child: GestureDetector(
             child: Container(
-              key: ValueKey('Add'),
+              key: const ValueKey('Add'),
               height: 68.0,
               color: Colors.green,
               alignment: AlignmentDirectional.center,
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
             onTap: () {
               print('dispatch Add');
-              dispatch(Action(ToDoListAction.onAdd));
+              dispatch(const Action(ToDoListAction.onAdd));
             },
           )),
         ],
@@ -66,7 +66,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
     ctx.dispatch(Action(ToDoListAction.add, payload: Todo.mock()));
     return true;
   } else if (action.type == ToDoListAction.onBroadcast) {
-    ctx.broadcastEffect(Action(ToDoListAction.broadcast));
+    ctx.broadcastEffect(const Action(ToDoListAction.broadcast));
     return true;
   }
 
@@ -76,7 +76,7 @@ bool toDoListEffect(Action action, Context<ToDoList> ctx) {
 dynamic toDoListEffectAsync(Action action, Context<ToDoList> ctx) {
   if (action.type == ToDoListAction.onAdd) {
     return Future.delayed(
-        Duration(seconds: 1), () => toDoListEffect(action, ctx));
+        const Duration(seconds: 1), () => toDoListEffect(action, ctx));
   }
 
   return null;
@@ -92,8 +92,8 @@ ToDoList toDoListReducer(ToDoList state, Action action) {
   if (action.type == ToDoListAction.add) {
     return state.clone()..list.add(action.payload);
   } else if (action.type == ToDoListAction.remove) {
-    Todo toDo = state.list.firstWhere((toDo) => toDo.id == action.payload.id);
-    int index = state.list.indexOf(toDo);
+    Todo toDo = state.list.firstWhere((Todo toDo) => toDo.id == action.payload.id);
+    final int index = state.list.indexOf(toDo);
     toDo = toDo.clone()..desc = 'removed';
     return state.clone()..list[index] = toDo;
   } else {
@@ -102,7 +102,7 @@ ToDoList toDoListReducer(ToDoList state, Action action) {
 }
 
 const Map pageInitParams = <String, dynamic>{
-  'list': [
+  'list': <Map<String, dynamic>>[
     <String, dynamic>{
       'id': '0',
       'title': 'title-0',
@@ -140,22 +140,22 @@ class ToDoComponent2 extends ToDoComponent {}
 
 class ToDoComponent3 extends ToDoComponent {}
 
-final toDoListDependencies = Dependencies<ToDoList>(slots: {
+final Dependencies<ToDoList> toDoListDependencies = Dependencies<ToDoList>(slots: <String, Dependent<ToDoList>>{
   'toDo0': ConnOp<ToDoList, Todo>(
-          get: (toDoList) => toDoList.list[0],
-          set: (toDoList, toDo) => toDoList.list[0] = toDo) +
+          get: (ToDoList toDoList) => toDoList.list[0],
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo) +
       ToDoComponent0(),
   'toDo1': ConnOp<ToDoList, Todo>(
-          get: (toDoList) => toDoList.list[1],
-          set: (toDoList, toDo) => toDoList.list[1] = toDo) +
+          get: (ToDoList toDoList) => toDoList.list[1],
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[1] = toDo) +
       ToDoComponent1(),
   'toDo2': ConnOp<ToDoList, Todo>(
-          get: (toDoList) => toDoList.list[2],
-          set: (toDoList, toDo) => toDoList.list[2] = toDo) +
+          get: (ToDoList toDoList) => toDoList.list[2],
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[2] = toDo) +
       ToDoComponent2(),
   'toDo3': ConnOp<ToDoList, Todo>(
-          get: (toDoList) => toDoList.list[3],
-          set: (toDoList, toDo) => toDoList.list[3] = toDo) +
+          get: (ToDoList toDoList) => toDoList.list[3],
+          set: (ToDoList toDoList, Todo toDo) => toDoList.list[3] = toDo) +
       ToDoComponent3(),
 });
 

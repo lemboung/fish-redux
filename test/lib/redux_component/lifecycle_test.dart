@@ -44,7 +44,7 @@ class ToDoComponentInstrument extends TestComponent<Todo> {
 }
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
-    Dependencies<ToDoList>(slots: {
+    Dependencies<ToDoList>(slots: <String, Dependent<ToDoList>>{
       'toDo': ConnOp<ToDoList, Todo>(
               get: (ToDoList toDoList) =>
                   toDoList.list.isNotEmpty ? toDoList.list[0] : Todo.mock(),
@@ -63,7 +63,7 @@ Widget pageView(
     children: <Widget>[
       Expanded(
           child: ListView.builder(
-        itemBuilder: (context, index) => viewService.buildComponent('toDo'),
+        itemBuilder: (BuildContext context, int index) => viewService.buildComponent('toDo'),
         itemCount: state.list.length,
       )),
       Row(
@@ -96,7 +96,7 @@ void main() {
   group('component', () {
     test('create', () {
       final TestComponent<Todo> component = TestComponent<Todo>(
-          view: toDoView, wrapper: (child) => ComponentWrapper(child));
+          view: toDoView, wrapper: (Widget child) => ComponentWrapper(child));
       expect(component, isNotNull);
 
       /// TODO
@@ -156,7 +156,7 @@ void main() {
 
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('toDo-initState'),
             Pin('toDo-didChangeDependencies'),
             Pin('toDo-build'),

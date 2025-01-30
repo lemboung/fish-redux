@@ -16,7 +16,7 @@ ViewMiddleware<T> safetyView<T>(
               try {
                 return next(state, dispatch, viewService);
               } catch (e, stackTrace) {
-                return onError?.call(
+                return onError.call(
                       e,
                       stackTrace,
                       component: component,

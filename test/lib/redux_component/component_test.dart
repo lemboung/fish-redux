@@ -54,7 +54,7 @@ class Component3 extends ToDoComponentInstrument {
 }
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
-    Dependencies<ToDoList>(slots: {
+    Dependencies<ToDoList>(slots: <String, Dependent<ToDoList>>{
       'toDo0': ConnOp<ToDoList, Todo>(
               get: (ToDoList toDoList) => toDoList.list[0],
               set: (ToDoList toDoList, Todo toDo) => toDoList.list[0] = toDo) +
@@ -82,7 +82,7 @@ Widget pageView(
     children: <Widget>[
       Expanded(
           child: ListView.builder(
-        itemBuilder: (context, index) {
+        itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             return viewService.buildComponent('toDo0');
           } else if (index == 1) {
@@ -134,7 +134,7 @@ void main() {
   group('component', () {
     test('create', () {
       final TestComponent<Todo> component = TestComponent<Todo>(
-          view: toDoView, wrapper: (child) => ComponentWrapper(child));
+          view: toDoView, wrapper: (Widget child) => ComponentWrapper(child));
       expect(component, isNotNull);
 
       /// TODO
@@ -247,10 +247,10 @@ void main() {
 
       expect(find.text('removed'), findsNWidgets(2));
 
-      ToDoList mockState = ToDoList.fromMap(pageInitParams);
+      final ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('page-build', mockState.clone()),
             Pin('toDo0-build', mockState.list[0].clone()),
             Pin('toDo1-build', mockState.list[1].clone()),
@@ -325,10 +325,10 @@ void main() {
 
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(2));
 
-      ToDoList mockState = ToDoList.fromMap(pageInitParams);
+      final ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('page-build', mockState.clone()),
             Pin('toDo0-build', mockState.list[0].clone()),
             Pin('toDo1-build', mockState.list[1].clone()),
@@ -336,7 +336,7 @@ void main() {
             Pin('toDo3-build', mockState.list[3].clone()),
             Pin('toDo0-onEdit', mockState.list[0].clone()),
             Pin('toDo0-onReduce', () {
-              String desc = '${mockState.list[0].desc}-effect';
+              final String desc = '${mockState.list[0].desc}-effect';
               mockState.list[0] = mockState.list[0].clone()..desc = desc;
               return mockState.list[0].clone();
             }),
@@ -344,7 +344,7 @@ void main() {
             Pin('toDo0-build', mockState.list[0].clone()),
             Pin('toDo1-onEdit', mockState.list[1].clone()),
             Pin('toDo1-onReduce', () {
-              String desc = '${mockState.list[1].desc}-effect';
+              final String desc = '${mockState.list[1].desc}-effect';
               mockState.list[1] = mockState.list[1].clone()..desc = desc;
               return mockState.list[1].clone();
             }),
@@ -393,7 +393,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       print(track);
 
@@ -405,7 +405,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('mark-1')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo0-onToDoBroadcast'), 1);
       expect(track.countOfTag('toDo1-onToDoBroadcast'), 1);
@@ -415,7 +415,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo0-onPageBroadcast'), 1);
       expect(track.countOfTag('toDo1-onPageBroadcast'), 1);
@@ -425,7 +425,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo0-onPageBroadcast'), 1);
       expect(track.countOfTag('toDo1-onPageBroadcast'), 1);

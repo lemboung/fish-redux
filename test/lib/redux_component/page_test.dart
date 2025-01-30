@@ -12,7 +12,7 @@ import '../track.dart';
 void main() {
   group('page', () {
     test('create', () {
-      TestPage<ToDoList, Map> page = TestPage<ToDoList, Map>(
+      final TestPage<ToDoList, Map> page = TestPage<ToDoList, Map>(
           initState: initState,
           view: toDoListView,
           wrapper: (Widget child) => PageWrapper(child));
@@ -30,7 +30,7 @@ void main() {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+          initState: instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
@@ -70,7 +70,7 @@ void main() {
 
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', ToDoList.fromMap(pageInitParams))
           ]));
@@ -80,7 +80,7 @@ void main() {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+          initState: instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
@@ -121,14 +121,14 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.markDone,
-                      payload: mockState.list.firstWhere((i) => i.id == '0')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '0')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -136,7 +136,7 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.markDone,
-                      payload: mockState.list.firstWhere((i) => i.id == '1')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '1')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -144,7 +144,7 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.remove,
-                      payload: mockState.list.firstWhere((i) => i.id == '2')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '2')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -152,7 +152,7 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.remove,
-                      payload: mockState.list.firstWhere((i) => i.id == '3')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '3')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -163,7 +163,7 @@ void main() {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+          initState: instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
@@ -204,7 +204,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
@@ -223,7 +223,7 @@ void main() {
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((Todo i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
@@ -238,7 +238,7 @@ void main() {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+          initState: instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
@@ -259,19 +259,19 @@ void main() {
           })).buildPage(pageInitParams)));
 
       await tester.tap(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-mock', skipOffstage: false), findsNWidgets(1));
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(1));
 
       await tester.tap(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-mock', skipOffstage: false), findsNWidgets(2));
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(2));
 
       await tester.tap(find.byKey(const ValueKey<String>('edit-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-0', skipOffstage: false), findsOneWidget);
       expect(find.text('desc-0-effect', skipOffstage: false), findsOneWidget);
@@ -279,7 +279,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
@@ -298,7 +298,7 @@ void main() {
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((Todo i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
@@ -313,7 +313,7 @@ void main() {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+          initState: instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
@@ -357,7 +357,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
@@ -376,7 +376,7 @@ void main() {
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((Todo i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
@@ -392,7 +392,7 @@ void main() {
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState:
-                  instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+                  instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
                 track.append('initState', map);
               }),
               view: instrumentView<ToDoList>(toDoListView,
@@ -435,7 +435,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
@@ -448,14 +448,14 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.markDone,
-                      payload: mockState.list.firstWhere((i) => i.id == '0')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '0')));
               return mockState.clone();
             }),
             Pin('onReduce', () {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.remove,
-                      payload: mockState.list.firstWhere((i) => i.id == '1')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '1')));
               return mockState.clone();
             }),
           ]));
@@ -466,7 +466,7 @@ void main() {
       final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
-          initState: instrumentInitState<ToDoList, Map>(initState, pre: (map) {
+          initState: instrumentInitState<ToDoList, Map>(initState, pre: (Map map) {
             track.append('initState', map);
           }),
           view: instrumentView<ToDoList>(toDoListView,
@@ -480,7 +480,7 @@ void main() {
           effect: toDoListEffect,
           middleware: <Middleware<ToDoList>>[
             instrumentMiddleware<ToDoList>(toDoListMiddleware,
-                pre: (action, getState) {
+                pre: (Action action, getState) {
               if (action.type == ToDoListAction.middlewareEdit) {
                 track.append('onMiddleware', getState().clone());
               }
@@ -502,13 +502,13 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('initState', pageInitParams),
             Pin('build', mockState.clone()),
             Pin('onMiddleware', mockState.clone()),
             Pin('onReduce', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((Todo i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-middleware';
               mockState = toDoListReducer(
@@ -519,7 +519,7 @@ void main() {
             Pin('onMiddleware', mockState.clone()),
             Pin('onReduce', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list.firstWhere((i) => i.id == '0');
+              Todo toDo = mockState.list.firstWhere((Todo i) => i.id == '0');
               toDo = toDo.clone();
               toDo.desc = '${toDo.desc}-middleware';
               mockState = toDoListReducer(

@@ -16,10 +16,10 @@ class Todo implements Cloneable<Todo> {
 
   @override
   Todo clone() => Todo()
-    ..id = this.id
-    ..title = this.title
-    ..desc = this.desc
-    ..isDone = this.isDone;
+    ..id = id
+    ..title = title
+    ..desc = desc
+    ..isDone = isDone;
 
   factory Todo.fromMap(Map map) {
     return Todo()
@@ -51,7 +51,7 @@ class ToDoList implements Cloneable<ToDoList> {
   ToDoList();
 
   @override
-  ToDoList clone() => ToDoList()..list.addAll(this.list);
+  ToDoList clone() => ToDoList()..list.addAll(list);
 
   factory ToDoList.fromMap(Map map) {
     return ToDoList()

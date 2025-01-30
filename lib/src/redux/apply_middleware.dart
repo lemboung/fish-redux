@@ -3,10 +3,10 @@ import 'basic.dart';
 /// Accumulate a list of Middleware that enhances Dispatch to the Store.
 /// The wrapped direction of the Store.dispatch is from inside to outside.
 StoreEnhancer<T> applyMiddleware<T>(List<Middleware<T>> middleware) {
-  return middleware == null || middleware.isEmpty
+  return middleware.isEmpty
       ? null
       : (StoreCreator<T> creator) => (T initState, Reducer<T> reducer) {
-            assert(middleware != null && middleware.isNotEmpty);
+            assert(middleware.isNotEmpty);
 
             final Store<T> store = creator(initState, reducer);
             final Dispatch initialValue = store.dispatch;

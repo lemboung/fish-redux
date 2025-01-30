@@ -27,7 +27,7 @@ class AOP {
   final ApplyLikeEnhancer _enhancer;
 
   AOP(List<ApplyLikeEnhancer> enhances)
-      : _enhancer = enhances?.isNotEmpty == true
+      : _enhancer = enhances.isNotEmpty == true
             ? enhances.reduce(_combine)
             : ApplyLikeEnhancerIdentity;
 

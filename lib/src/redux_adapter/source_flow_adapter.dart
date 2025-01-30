@@ -1,10 +1,6 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action, Page;
 
-import '../redux/redux.dart';
-import '../redux_component/redux_component.dart';
-import '../utils/utils.dart';
-import 'recycle_context.dart';
 
 /// template is a map, driven by array
 /// Use [FlowAdapter.source] instead of [SourceFlowAdapter]
@@ -39,7 +35,6 @@ class SourceFlowAdapter<T extends ItemListLike> extends Logic<T>
   @override
   ListAdapter buildAdapter(ContextSys<T> ctx) {
     final ItemListLike adapterSource = ctx.state;
-    assert(adapterSource != null);
 
     final RecycleContext<T> recycleCtx = ctx;
     final List<ListAdapter> adapters = <ListAdapter>[];
@@ -50,38 +45,34 @@ class SourceFlowAdapter<T extends ItemListLike> extends Logic<T>
       final String type = adapterSource.getItemType(index);
       final AbstractLogic<Object> result = pool[type];
 
-      assert(
-          result != null, 'Type of $type has not benn registered in the pool.');
-      if (result != null) {
-        if (result is AbstractAdapter<Object>) {
-          final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
-            Tuple2<Type, Object>(
-              result.runtimeType,
-              result.key(adapterSource.getItemData(index)),
-            ),
-            () => result.createContext(
-              recycleCtx.store,
-              recycleCtx.context,
-              _subGetter(() => recycleCtx.state, index),
-              bus: recycleCtx.bus,
-              enhancer: recycleCtx.enhancer,
-            ),
-          );
+      if (result is AbstractAdapter<Object>) {
+        final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
+          Tuple2<Type, Object>(
+            result.runtimeType,
+            result.key(adapterSource.getItemData(index)),
+          ),
+          () => result.createContext(
+            recycleCtx.store,
+            recycleCtx.context,
+            _subGetter(() => recycleCtx.state, index),
+            bus: recycleCtx.bus,
+            enhancer: recycleCtx.enhancer,
+          ),
+        );
 
-          /// hack to reduce adapter's rebuilding
-          adapters.add(memoizeListAdapter(result, subCtx));
-        } else if (result is AbstractComponent<Object>) {
-          adapters.add(ListAdapter((BuildContext buildContext, int _) {
-            return result.buildComponent(
-              recycleCtx.store,
-              _subGetter(() => recycleCtx.state, index),
-              bus: recycleCtx.bus,
-              enhancer: recycleCtx.enhancer,
-            );
-          }, 1));
-        }
+        /// hack to reduce adapter's rebuilding
+        adapters.add(memoizeListAdapter(result, subCtx));
+      } else if (result is AbstractComponent<Object>) {
+        adapters.add(ListAdapter((BuildContext buildContext, int _) {
+          return result.buildComponent(
+            recycleCtx.store,
+            _subGetter(() => recycleCtx.state, index),
+            bus: recycleCtx.bus,
+            enhancer: recycleCtx.enhancer,
+          );
+        }, 1));
       }
-    }
+        }
     recycleCtx.cleanUnused();
 
     return combineListAdapters(adapters);
@@ -97,14 +88,12 @@ Reducer<T> _dynamicReducer<T extends ItemListLike>(
     ItemListLike copy;
     for (int i = 0; i < state.itemCount; i++) {
       final AbstractLogic<Object> result = pool[state.getItemType(i)];
-      if (result != null) {
-        final Object oldData = state.getItemData(i);
-        final Object newData = result.onReducer(oldData, action);
-        if (newData != oldData) {
-          copy = state.updateItemData(i, newData, copy != null);
-        }
+      final Object oldData = state.getItemData(i);
+      final Object newData = result.onReducer(oldData, action);
+      if (newData != oldData) {
+        copy = state.updateItemData(i, newData, copy != null);
       }
-    }
+        }
     return copy ?? state;
   };
 
@@ -126,7 +115,7 @@ Get<Object> _subGetter(Get<ItemListLike> getter, int index) {
     final ItemListLike newState = getter();
 
     /// Either all sub-components use cache or not.
-    if (newState != null && newState.itemCount > index) {
+    if (newState.itemCount > index) {
       final String newType = newState.getItemType(index);
       final Object newData = newState.getItemData(index);
 

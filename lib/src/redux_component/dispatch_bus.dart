@@ -11,13 +11,13 @@ class DispatchBusDefault implements DispatchBus {
   @override
   void attach(DispatchBus parent) {
     this.parent = parent;
-    unregister?.call();
-    unregister = parent?.registerReceiver(dispatch);
+    unregister.call();
+    unregister = parent.registerReceiver(dispatch);
   }
 
   @override
   void detach() {
-    unregister?.call();
+    unregister.call();
   }
 
   @override
@@ -33,7 +33,7 @@ class DispatchBusDefault implements DispatchBus {
 
   @override
   void broadcast(Action action, {DispatchBus excluded}) {
-    parent?.dispatch(action, excluded: excluded?.dispatch);
+    parent.dispatch(action, excluded: excluded.dispatch);
   }
 
   @override
@@ -41,13 +41,9 @@ class DispatchBusDefault implements DispatchBus {
     assert(!_dispatchList.contains(dispatch),
         'Do not register a dispatch which is already existed');
 
-    if (dispatch != null) {
-      _dispatchList.add(dispatch);
-      return () {
-        _dispatchList.remove(dispatch);
-      };
-    } else {
-      return null;
+    _dispatchList.add(dispatch);
+    return () {
+      _dispatchList.remove(dispatch);
+    };
     }
-  }
 }

@@ -29,8 +29,7 @@ class AutoInitConnector<T extends MapLike, P> extends ConnOp<T, P> {
   final P Function(T state) init;
 
   AutoInitConnector(this.init, {String key, void set(T state, P sub)})
-      : assert(init != null),
-        _setHook = set,
+      : _setHook = set,
         _key = key ?? _gen();
 
   @override
@@ -40,6 +39,6 @@ class AutoInitConnector<T extends MapLike, P> extends ConnOp<T, P> {
   @override
   void set(T state, P subState) {
     state[_key] = subState;
-    _setHook?.call(state, subState);
+    _setHook.call(state, subState);
   }
 }

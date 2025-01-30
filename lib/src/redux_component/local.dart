@@ -40,7 +40,7 @@ import 'basic.dart';
 /// ```
 ///
 abstract class LocalProps<T extends LocalProps<T>> {
-  LocalProps(Context<Object> ctx) : assert(ctx != null);
+  LocalProps(Context<Object> ctx);
   void destructor(Context<Object> ctx);
 
   static _LocalPropsProvider<T> provide<T extends LocalProps<T>>(
@@ -56,9 +56,7 @@ class _LocalPropsProvider<T> {
   final T Function(Context<Object>) construct;
   final void Function(T, Context<Object>) destruct;
 
-  const _LocalPropsProvider({@required this.construct, this.destruct})
-      : assert(construct != null,
-            'Please provide a constructor to create <T> instance.');
+  const _LocalPropsProvider({@required this.construct, this.destruct});
 
   T of(ExtraData context) {
     assert(context is Context<Object>);
@@ -66,10 +64,8 @@ class _LocalPropsProvider<T> {
     if (ctx.extra[_key] == null) {
       final T result = construct(ctx);
       ctx.extra[_key] = result;
-      if (destruct != null) {
-        ctx.registerOnDisposed(() => destruct(result, ctx));
-      }
-    }
+      ctx.registerOnDisposed(() => destruct(result, ctx));
+        }
     return ctx.extra[_key];
   }
 

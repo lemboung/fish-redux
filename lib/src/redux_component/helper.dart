@@ -33,20 +33,19 @@ AdapterBuilder<T> asAdapter<T>(ViewBuilder<T> view) {
 
 Reducer<T> mergeReducers<T extends K, K>(Reducer<K> sup, [Reducer<T> sub]) {
   return (T state, Action action) {
-    return sub?.call(sup(state, action), action) ?? sup(state, action);
+    return sub.call(sup(state, action), action) ?? sup(state, action);
   };
 }
 
 Effect<T> mergeEffects<T extends K, K>(Effect<K> sup, [Effect<T> sub]) {
   return (Action action, Context<T> ctx) {
-    return sub?.call(action, ctx) ?? sup.call(action, ctx);
+    return sub.call(action, ctx) ?? sup.call(action, ctx);
   };
 }
 
 /// combine & as
 /// for action.type which override it's == operator
-Reducer<T> asReducer<T>(Map<Object, Reducer<T>> map) => (map == null ||
-        map.isEmpty)
+Reducer<T> asReducer<T>(Map<Object, Reducer<T>> map) => (map.isEmpty)
     ? null
     : (T state, Action action) =>
         map.entries
@@ -54,11 +53,11 @@ Reducer<T> asReducer<T>(Map<Object, Reducer<T>> map) => (map == null ||
                 (MapEntry<Object, Reducer<T>> entry) =>
                     action.type == entry.key,
                 orElse: () => null)
-            ?.value(state, action) ??
+            .value(state, action) ??
         state;
 
 Reducer<T> filterReducer<T>(Reducer<T> reducer, ReducerFilter<T> filter) {
-  return (reducer == null || filter == null)
+  return (filter == null)
       ? reducer
       : (T state, Action action) {
           return filter(state, action) ? reducer(state, action) : state;
@@ -72,7 +71,7 @@ typedef SubEffect<T> = FutureOr<void> Function(Action action, Context<T> ctx);
 /// for action.type which override it's == operator
 /// return [UserEffecr]
 Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
-    (map == null || map.isEmpty)
+    (map.isEmpty)
         ? null
         : (Action action, Context<T> ctx) {
             final SubEffect<T> subEffect = map.entries
@@ -81,12 +80,10 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
                       action.type == entry.key,
                   orElse: () => null,
                 )
-                ?.value;
+                .value;
 
-            if (subEffect != null) {
-              return subEffect.call(action, ctx) ?? _SUB_EFFECT_RETURN_NULL;
-            }
-
+            return subEffect.call(action, ctx) ?? _SUB_EFFECT_RETURN_NULL;
+          
             //skip-lifecycle-actions
             if (action.type is Lifecycle) {
               return _SUB_EFFECT_RETURN_NULL;
@@ -99,10 +96,10 @@ Effect<T> combineEffects<T>(Map<Object, SubEffect<T>> map) =>
 /// return [EffectDispatch]
 Dispatch createEffectDispatch<T>(Effect<T> userEffect, Context<T> ctx) {
   return (Action action) {
-    final Object result = userEffect?.call(action, ctx);
+    final Object result = userEffect.call(action, ctx);
 
     //skip-lifecycle-actions
-    if (action.type is Lifecycle && (result == null || result == false)) {
+    if (action.type is Lifecycle && (result == false)) {
       return _SUB_EFFECT_RETURN_NULL;
     }
 
@@ -119,8 +116,8 @@ Dispatch createNextDispatch<T>(ContextSys<T> ctx) => (Action action) {
 /// return [Dispatch]
 Dispatch createDispatch<T>(Dispatch onEffect, Dispatch next, Context<T> ctx) =>
     (Action action) {
-      final Object result = onEffect?.call(action);
-      if (result == null || result == false) {
+      final Object result = onEffect.call(action);
+      if (result == false) {
         next(action);
       }
 

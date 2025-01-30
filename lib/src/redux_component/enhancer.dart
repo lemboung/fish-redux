@@ -36,23 +36,15 @@ class EnhancerDefault<T> implements Enhancer<T> {
     List<EffectMiddleware<T>> effectMiddleware,
     List<AdapterMiddleware<T>> adapterMiddleware,
   }) {
-    if (middleware != null) {
-      _middleware.insertAll(0, middleware);
-      _storeEnhancer = applyMiddleware<T>(_middleware);
-    }
-    if (viewMiddleware != null) {
+    _middleware.insertAll(0, middleware);
+    _storeEnhancer = applyMiddleware<T>(_middleware);
       _viewMiddleware.insertAll(0, viewMiddleware);
-      _viewEnhancer = mergeViewMiddleware<T>(_viewMiddleware);
-    }
-    if (effectMiddleware != null) {
+    _viewEnhancer = mergeViewMiddleware<T>(_viewMiddleware);
       _effectMiddleware.insertAll(0, effectMiddleware);
-      _effectEnhancer = mergeEffectMiddleware<T>(_effectMiddleware);
-    }
-    if (adapterMiddleware != null) {
+    _effectEnhancer = mergeEffectMiddleware<T>(_effectMiddleware);
       _adapterMiddleware.insertAll(0, adapterMiddleware);
-      _adapterEnhancer = mergeAdapterMiddleware<T>(_adapterMiddleware);
+    _adapterEnhancer = mergeAdapterMiddleware<T>(_adapterMiddleware);
     }
-  }
 
   @override
   void append({
@@ -61,23 +53,15 @@ class EnhancerDefault<T> implements Enhancer<T> {
     List<EffectMiddleware<T>> effectMiddleware,
     List<AdapterMiddleware<T>> adapterMiddleware,
   }) {
-    if (middleware != null) {
-      _middleware.addAll(middleware);
-      _storeEnhancer = applyMiddleware<T>(_middleware);
-    }
-    if (viewMiddleware != null) {
+    _middleware.addAll(middleware);
+    _storeEnhancer = applyMiddleware<T>(_middleware);
       _viewMiddleware.addAll(viewMiddleware);
-      _viewEnhancer = mergeViewMiddleware<T>(_viewMiddleware);
-    }
-    if (effectMiddleware != null) {
+    _viewEnhancer = mergeViewMiddleware<T>(_viewMiddleware);
       _effectMiddleware.addAll(effectMiddleware);
-      _effectEnhancer = mergeEffectMiddleware<T>(_effectMiddleware);
-    }
-    if (adapterMiddleware != null) {
+    _effectEnhancer = mergeEffectMiddleware<T>(_effectMiddleware);
       _adapterMiddleware.addAll(adapterMiddleware);
-      _adapterEnhancer = mergeAdapterMiddleware<T>(_adapterMiddleware);
+    _adapterEnhancer = mergeAdapterMiddleware<T>(_adapterMiddleware);
     }
-  }
 
   @override
   ViewBuilder<K> viewEnhance<K>(
@@ -85,7 +69,7 @@ class EnhancerDefault<T> implements Enhancer<T> {
     AbstractComponent<K> component,
     Store<T> store,
   ) =>
-      _viewEnhancer?.call(component, store)?.call(_inverterView<K>(view)) ??
+      _viewEnhancer.call(component, store).call(_inverterView<K>(view)) ??
       view;
 
   @override
@@ -95,8 +79,8 @@ class EnhancerDefault<T> implements Enhancer<T> {
     Store<T> store,
   ) =>
       _adapterEnhancer
-          ?.call(logic, store)
-          ?.call(_inverterAdapter<K>(adapterBuilder)) ??
+          .call(logic, store)
+          .call(_inverterAdapter<K>(adapterBuilder)) ??
       adapterBuilder;
 
   @override
@@ -105,12 +89,12 @@ class EnhancerDefault<T> implements Enhancer<T> {
     AbstractLogic<K> logic,
     Store<T> store,
   ) =>
-      _effectEnhancer?.call(logic, store)?.call(_inverterEffect<K>(effect)) ??
+      _effectEnhancer.call(logic, store).call(_inverterEffect<K>(effect)) ??
       effect;
 
   @override
   StoreCreator<T> storeEnhance(StoreCreator<T> creator) =>
-      _storeEnhancer?.call(creator) ?? creator;
+      _storeEnhancer.call(creator) ?? creator;
 
   Effect<dynamic> _inverterEffect<K>(Effect<K> effect) => effect == null
       ? null

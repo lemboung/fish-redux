@@ -21,7 +21,7 @@ AdapterMiddleware<T> safetyAdapter<T>({
                   try {
                     return result.itemBuilder(buildContext, index);
                   } catch (e, stackTrace) {
-                    return onError?.call(
+                    return onError.call(
                           e,
                           stackTrace,
                           adapter: adapter,
@@ -32,7 +32,7 @@ AdapterMiddleware<T> safetyAdapter<T>({
                   }
                 }, result.itemCount);
               } catch (e, stackTrace) {
-                final Widget errorWidget = onError?.call(
+                final Widget errorWidget = onError.call(
                   e,
                   stackTrace,
                   adapter: adapter,

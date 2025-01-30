@@ -2,8 +2,8 @@ import 'package:fish_redux/fish_redux.dart';
 
 import '../state.dart';
 import '../todo_component/component.dart';
-import 'reducer.dart';
 import 'connector.dart';
+import 'reducer.dart';
 
 FlowAdapter<PageState> get adapter =>
     FlowAdapter<PageState>(

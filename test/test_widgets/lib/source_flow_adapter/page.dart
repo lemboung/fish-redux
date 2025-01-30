@@ -24,15 +24,15 @@ Widget pageView(
           Expanded(
               child: GestureDetector(
             child: Container(
-              key: ValueKey('Add'),
+              key: const ValueKey('Add'),
               height: 68.0,
               color: Colors.green,
               alignment: AlignmentDirectional.center,
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
             onTap: () {
               print('dispatch Add');
-              dispatch(Action(PageAction.onAdd));
+              dispatch(const Action(PageAction.onAdd));
             },
             onLongPress: () {
               print('dispatch broadcast');
@@ -46,7 +46,7 @@ Widget pageView(
 }
 
 const Map<String, dynamic> pageInitParams = <String, dynamic>{
-  'list': [
+  'list': <Map<String, dynamic>>[
     <String, dynamic>{
       'id': '0',
       'title': 'title-0',
@@ -92,6 +92,6 @@ Widget createDynamicAdapterWidget(BuildContext context) {
           initState: initState,
           effect: pageEffect,
           dependencies: Dependencies<ToDoList>(
-              adapter: NoneConn<ToDoList>() + testAdapter))
+              adapter: const NoneConn<ToDoList>() + testAdapter))
       .buildPage(pageInitParams);
 }

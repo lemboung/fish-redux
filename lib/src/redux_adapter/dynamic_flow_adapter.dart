@@ -1,10 +1,6 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action, Page;
 
-import '../redux/redux.dart';
-import '../redux_component/redux_component.dart';
-import '../utils/utils.dart';
-import 'recycle_context.dart';
 
 /// template is a map, driven by array
 /// Use [SimpleFlowAdapter.dynamic] instead of [DynamicFlowAdapter]
@@ -39,7 +35,6 @@ class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
   @override
   ListAdapter buildAdapter(ContextSys<T> ctx) {
     final List<ItemBean> list = connector.get(ctx.state);
-    assert(list != null);
 
     final RecycleContext<T> recycleCtx = ctx;
     final List<ListAdapter> adapters = <ListAdapter>[];
@@ -50,38 +45,34 @@ class DynamicFlowAdapter<T> extends Logic<T> with RecycleContextMixin<T> {
       final ItemBean itemBean = list[index];
       final String type = itemBean.type;
       final AbstractLogic<Object> result = pool[type];
-      assert(
-          result != null, 'Type of $type has not benn registered in the pool.');
-      if (result != null) {
-        if (result is AbstractAdapter<Object>) {
-          final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
-            Tuple2<Type, Object>(
-              result.runtimeType,
-              result.key(itemBean.data),
-            ),
-            () => result.createContext(
-              recycleCtx.store,
-              recycleCtx.context,
-              _subGetter(() => connector.get(recycleCtx.state), index),
-              bus: recycleCtx.bus,
-              enhancer: recycleCtx.enhancer,
-            ),
-          );
+      if (result is AbstractAdapter<Object>) {
+        final ContextSys<Object> subCtx = recycleCtx.reuseOrCreate(
+          Tuple2<Type, Object>(
+            result.runtimeType,
+            result.key(itemBean.data),
+          ),
+          () => result.createContext(
+            recycleCtx.store,
+            recycleCtx.context,
+            _subGetter(() => connector.get(recycleCtx.state), index),
+            bus: recycleCtx.bus,
+            enhancer: recycleCtx.enhancer,
+          ),
+        );
 
-          /// hack to reduce adapter's rebuilding
-          adapters.add(memoizeListAdapter(result, subCtx));
-        } else if (result is AbstractComponent<Object>) {
-          adapters.add(ListAdapter((BuildContext buildContext, int _) {
-            return result.buildComponent(
-              recycleCtx.store,
-              _subGetter(() => connector.get(recycleCtx.state), index),
-              bus: recycleCtx.bus,
-              enhancer: recycleCtx.enhancer,
-            );
-          }, 1));
-        }
+        /// hack to reduce adapter's rebuilding
+        adapters.add(memoizeListAdapter(result, subCtx));
+      } else if (result is AbstractComponent<Object>) {
+        adapters.add(ListAdapter((BuildContext buildContext, int _) {
+          return result.buildComponent(
+            recycleCtx.store,
+            _subGetter(() => connector.get(recycleCtx.state), index),
+            bus: recycleCtx.bus,
+            enhancer: recycleCtx.enhancer,
+          );
+        }, 1));
       }
-    }
+        }
     recycleCtx.cleanUnused();
 
     return combineListAdapters(adapters);
@@ -100,14 +91,12 @@ Reducer<T> _dynamicReducer<T>(
     for (int i = 0; i < state.length; i++) {
       final ItemBean itemBean = state[i];
       final AbstractLogic<Object> result = pool[itemBean.type];
-      if (result != null) {
-        final Object newData = result.onReducer(itemBean.data, action);
-        if (newData != itemBean.data) {
-          copy ??= state.toList();
-          copy[i] = itemBean.clone(data: newData);
-        }
+      final Object newData = result.onReducer(itemBean.data, action);
+      if (newData != itemBean.data) {
+        copy ??= state.toList();
+        copy[i] = itemBean.clone(data: newData);
       }
-    }
+        }
     return copy ?? state;
   };
 
@@ -131,7 +120,7 @@ Get<Object> _subGetter(Get<List<ItemBean>> getter, int index) {
     final List<ItemBean> newState = getter();
 
     /// Either all sub-components use cache or not.
-    if (newState != null && newState.length > index) {
+    if (newState.length > index) {
       final ItemBean newItem = newState[index];
       if (_couldReuse(cacheItem, newItem)) {
         cacheItem = newItem;

@@ -10,10 +10,8 @@ ViewBuilder<T> instrumentView<T>(
       Dispatch dispatch,
       ViewService viewService,
     ) {
-      if (pre != null) {
-        pre(state, dispatch, viewService);
-      }
-
+      pre(state, dispatch, viewService);
+    
       return builder(state, dispatch, viewService);
     };
 
@@ -25,15 +23,11 @@ InitState<T, P> instrumentInitState<T extends Cloneable<T>, P>(
         {initStateInstrumentPre<P> pre,
         initStateInstrumentSuf<T> suf}) =>
     (P params) {
-      if (pre != null) {
-        pre(params);
-      }
-      final T state = initState(params);
+      pre(params);
+          final T state = initState(params);
 
-      if (suf != null) {
-        suf(state);
-      }
-
+      suf(state);
+    
       return state;
     };
 
@@ -45,17 +39,13 @@ Reducer<T> instrumentReducer<T>(Reducer<T> reducer,
         ReducerInstrument<T> change}) =>
     (T state, Action action) {
       T newState = state;
-      if (pre != null) {
-        pre(state, action);
-      }
-
+      pre(state, action);
+    
       newState = reducer(state, action);
 
-      if (suf != null) {
-        suf(newState, action);
-      }
-
-      if (change != null && newState != state) {
+      suf(newState, action);
+    
+      if (newState != state) {
         change(newState, action);
       }
 
@@ -66,10 +56,8 @@ typedef EffectInstrument<T> = void Function(Action action, Get<T> getState);
 
 Effect<T> instrumentEffect<T>(Effect<T> effect, EffectInstrument<T> pre) =>
     (Action action, Context<T> ctx) {
-      if (pre != null) {
-        pre(action, () => ctx.state);
-      }
-      return effect(action, ctx);
+      pre(action, () => ctx.state);
+          return effect(action, ctx);
     };
 
 typedef MiddlewareInstrument<T> = void Function(Action action, Get<T> getState);
@@ -82,16 +70,12 @@ Middleware<T> instrumentMiddleware<T>(Middleware<T> middleware,
     }) {
       return (Dispatch next) {
         return (Action action) {
-          if (pre != null) {
-            pre(action, getState);
-          }
-
+          pre(action, getState);
+        
           middleware(dispatch: dispatch, getState: getState)(next)(action);
 
-          if (suf != null) {
-            suf(action, getState);
-          }
-        };
+          suf(action, getState);
+                };
       };
     };
 

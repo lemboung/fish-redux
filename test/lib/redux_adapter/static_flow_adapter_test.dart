@@ -78,9 +78,9 @@ class Adapter3 extends ToDoAdapterInstrument {
 
 Dependencies<ToDoList> toDoListDependencies(final Track track) =>
     Dependencies<ToDoList>(
-        adapter: NoneConn<ToDoList>() +
+        adapter: const NoneConn<ToDoList>() +
             TestStaticFlowAdapter<ToDoList>(
-                slots: [
+                slots: <Dependent<ToDoList>>[
                   ConnOp<ToDoList, Todo>(
                           get: (ToDoList toDoList) => toDoList.list[0],
                           set: (ToDoList toDoList, Todo toDo) =>
@@ -122,7 +122,7 @@ void main() {
       final TestComponent<Todo> component = ToDoComponentInstrument(track, 0);
       expect(component, isNotNull);
 
-      Widget page = TestPage<ToDoList, Map>(
+      final Widget page = TestPage<ToDoList, Map>(
               initState: initState,
               view: pageView,
               dependencies: toDoListDependencies(track))
@@ -283,10 +283,10 @@ void main() {
 
       expect(find.text('desc-1-effect'), findsNWidgets(1));
 
-      ToDoList mockState = ToDoList.fromMap(pageInitParams);
+      final ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('page-build', mockState.clone()),
             Pin('toDo0-build', mockState.list[0].clone()),
             Pin('toDo1-build', mockState.list[1].clone()),
@@ -294,7 +294,7 @@ void main() {
             Pin('toDo3-build', mockState.list[3].clone()),
             Pin('toDo0-onEdit', mockState.list[0].clone()),
             Pin('toDo0-onReduce', () {
-              String desc = '${mockState.list[0].desc}-effect';
+              final String desc = '${mockState.list[0].desc}-effect';
               mockState.list[0] = mockState.list[0].clone()..desc = desc;
               return mockState.list[0].clone();
             }),
@@ -304,7 +304,7 @@ void main() {
             // Pin('toDo3-build', mockState.list[3].clone()),
             Pin('toDo1-onEdit', mockState.list[1].clone()),
             Pin('toDo1-onReduce', () {
-              String desc = '${mockState.list[1].desc}-effect';
+              final String desc = '${mockState.list[1].desc}-effect';
               mockState.list[1] = mockState.list[1].clone()..desc = desc;
               return mockState.list[1].clone();
             }),
@@ -328,7 +328,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       print(track);
 
@@ -340,7 +340,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('mark-1')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo0-onToDoBroadcast'), 1);
       expect(track.countOfTag('toDo1-onToDoBroadcast'), 1);

@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart' hide Action, Page;
 import '../redux/redux.dart';
 import 'auto_dispose.dart';
 import 'basic.dart';
-import 'lifecycle.dart';
 
 mixin _ExtraMixin {
   Map<String, Object> _extra;
@@ -38,12 +37,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
     /// pageBus
     @required this.bus,
     @required this.enhancer,
-  })  : assert(logic != null),
-        assert(store != null),
-        assert(buildContext != null),
-        assert(getState != null),
-        assert(bus != null && enhancer != null),
-        _buildContext = buildContext {
+  })  : _buildContext = buildContext {
     ///
     _effectDispatch = logic.createEffectDispatch(this, enhancer);
 
@@ -78,9 +72,8 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
 
   @override
   Widget buildComponent(String name, {Widget defaultWidget}) {
-    assert(name != null, 'The name must be NotNull for buildComponent.');
     final Dependent<T> dependent = logic.slot(name);
-    final Widget result = dependent?.buildComponent(store, getState,
+    final Widget result = dependent.buildComponent(store, getState,
         bus: bus, enhancer: enhancer);
     assert(result != null || defaultWidget != null,
         'Could not found component by name "$name." You can set a default widget for buildComponent');
@@ -128,21 +121,20 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
   @override
   void Function() addObservable(Subscribe observable) {
     final void Function() unsubscribe = observable(() {
-      _forceUpdate?.call();
+      _forceUpdate.call();
     });
     registerOnDisposed(unsubscribe);
     return unsubscribe;
   }
 
   @override
-  void forceUpdate() => _forceUpdate?.call();
+  void forceUpdate() => _forceUpdate.call();
 
   @override
   void Function() listen({
     bool Function(T, T) isChanged,
     @required void Function() onChange,
   }) {
-    assert(onChange != null);
     T oldState;
     final AutoDispose disposable = registerOnDisposed(
       store.subscribe(
@@ -159,7 +151,7 @@ abstract class LogicContext<T> extends ContextSys<T> with _ExtraMixin {
       ),
     );
 
-    return () => disposable?.dispose();
+    return () => disposable.dispose();
   }
 }
 
@@ -185,8 +177,7 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
     @required this.sidecarCtx,
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
-  })  : assert(bus != null && enhancer != null),
-        super(
+  })  : super(
           logic: logic,
           store: store,
           buildContext: buildContext,
@@ -196,30 +187,24 @@ class ComponentContext<T> extends LogicContext<T> implements ViewUpdater<T> {
         ) {
     _latestState = state;
 
-    sidecarCtx?.setParent(this);
+    sidecarCtx.setParent(this);
   }
 
   @override
   void onLifecycle(Action action) {
     super.onLifecycle(action);
-    sidecarCtx?.onLifecycle(action);
+    sidecarCtx.onLifecycle(action);
   }
 
   @override
   ListAdapter buildAdapter() {
-    assert(sidecarCtx != null);
-    return logic.adapterDep()?.buildAdapter(sidecarCtx) ??
+    return logic.adapterDep().buildAdapter(sidecarCtx) ??
         const ListAdapter(null, 0);
   }
 
   @override
   Widget buildWidget() {
-    Widget result = _widgetCache;
-    if (result == null) {
-      result = _widgetCache = view(state, dispatch, this);
-
-      dispatch(LifecycleCreator.build(name));
-    }
+    final Widget result = _widgetCache;
     return result;
   }
 

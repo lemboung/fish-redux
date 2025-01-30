@@ -1,5 +1,4 @@
 import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide Action;
 
 abstract class SimpleComponent<T> extends Component<T> {

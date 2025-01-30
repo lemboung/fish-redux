@@ -60,7 +60,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     @required Enhancer<Object> enhancer,
   }) {
     /// Check bus: DispatchBusDefault(); enhancer: EnhancerDefault<Object>();
-    assert(bus != null && enhancer != null);
 
     return protectedWrapper(
       ComponentWidget<T>(
@@ -83,7 +82,6 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
     @required DispatchBus bus,
     @required Enhancer<Object> enhancer,
   }) {
-    assert(bus != null && enhancer != null);
     return ComponentContext<T>(
       logic: this,
       store: store,
@@ -93,7 +91,7 @@ abstract class Component<T> extends Logic<T> implements AbstractComponent<T> {
       shouldUpdate: protectedShouldUpdate,
       name: name,
       markNeedsBuild: markNeedsBuild,
-      sidecarCtx: adapterDep()?.createContext(
+      sidecarCtx: adapterDep().createContext(
         store,
         buildContext,
         getState,
@@ -133,10 +131,7 @@ class ComponentWidget<T> extends StatefulWidget {
     this.bus,
     this.enhancer,
     Key key,
-  })  : assert(component != null),
-        assert(store != null),
-        assert(getter != null),
-        super(key: key);
+  })  : super(key: key);
 
   @override
   ComponentState<T> createState() => component.createState();

@@ -11,13 +11,13 @@ Widget pageView(
   ViewService viewService,
 ) {
   print('build pageView');
-  ListAdapter listAdapter = viewService.buildAdapter();
+  final ListAdapter listAdapter = viewService.buildAdapter();
   return ListView.builder(
       itemBuilder: listAdapter.itemBuilder, itemCount: listAdapter.itemCount);
 }
 
 const Map pageInitParams = <String, dynamic>{
-  'list': [
+  'list': <Map<String, dynamic>>[
     <String, dynamic>{
       'id': '0',
       'title': 'title-0',
@@ -52,6 +52,6 @@ Widget createStaticAdapterWidget(BuildContext context) {
           initState: initState,
           view: pageView,
           dependencies: Dependencies<ToDoList>(
-              adapter: NoneConn<ToDoList>() + testAdapter))
+              adapter: const NoneConn<ToDoList>() + testAdapter))
       .buildPage(pageInitParams);
 }

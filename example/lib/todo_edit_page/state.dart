@@ -30,9 +30,9 @@ class TodoEditState implements GlobalBaseState, Cloneable<TodoEditState> {
 
 TodoEditState initState(ToDoState arg) {
   final TodoEditState state = TodoEditState();
-  state.toDo = arg?.clone() ?? ToDoState();
-  state.nameEditController = TextEditingController(text: arg?.title);
-  state.descEditController = TextEditingController(text: arg?.desc);
+  state.toDo = arg.clone() ?? ToDoState();
+  state.nameEditController = TextEditingController(text: arg.title);
+  state.descEditController = TextEditingController(text: arg.desc);
   state.focusNodeName = FocusNode();
   state.focusNodeDesc = FocusNode();
 

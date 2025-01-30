@@ -13,11 +13,11 @@ import '../track.dart';
 void main() {
   group('adapter', () {
     test('create', () {
-      TestPage<ToDoList, Map> page = TestPage<ToDoList, Map>(
+      final TestPage<ToDoList, Map> page = TestPage<ToDoList, Map>(
           initState: initState,
           view: pageView,
           dependencies: Dependencies<ToDoList>(
-              adapter: NoneConn<ToDoList>() +
+              adapter: const NoneConn<ToDoList>() +
                   TestAdapter<ToDoList>(
                       adapter: toDoListAdapter,
                       reducer: toDoListReducer,
@@ -33,7 +33,7 @@ void main() {
               initState: initState,
               view: pageView,
               dependencies: Dependencies<ToDoList>(
-                  adapter: NoneConn<ToDoList>() +
+                  adapter: const NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: toDoListReducer,
@@ -69,7 +69,7 @@ void main() {
     });
 
     testWidgets('reducer', (WidgetTester tester) async {
-      Track track = Track();
+      final Track track = Track();
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
               view: instrumentView<ToDoList>(pageView,
@@ -77,7 +77,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  adapter: NoneConn<ToDoList>() +
+                  adapter: const NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -116,13 +116,13 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('build', mockState.clone()),
             Pin('onReduce', () {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.markDone,
-                      payload: mockState.list.firstWhere((i) => i.id == '0')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '0')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -130,7 +130,7 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.markDone,
-                      payload: mockState.list.firstWhere((i) => i.id == '1')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '1')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -138,7 +138,7 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.remove,
-                      payload: mockState.list.firstWhere((i) => i.id == '2')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '2')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -146,7 +146,7 @@ void main() {
               mockState = toDoListReducer(
                   mockState,
                   Action(ToDoListAction.remove,
-                      payload: mockState.list.firstWhere((i) => i.id == '3')));
+                      payload: mockState.list.firstWhere((Todo i) => i.id == '3')));
               return mockState.clone();
             }),
             Pin('build', mockState.clone()),
@@ -154,7 +154,7 @@ void main() {
     });
 
     testWidgets('effect', (WidgetTester tester) async {
-      Track track = Track();
+      final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
@@ -163,7 +163,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  adapter: NoneConn<ToDoList>() +
+                  adapter: const NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -202,7 +202,7 @@ void main() {
 
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
@@ -220,7 +220,7 @@ void main() {
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list[0].clone();
+              final Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
                   mockState, Action(ToDoListAction.edit, payload: toDo));
@@ -231,7 +231,7 @@ void main() {
     });
 
     testWidgets('effectAsync', (WidgetTester tester) async {
-      Track track = Track();
+      final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
@@ -240,7 +240,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  adapter: NoneConn<ToDoList>() +
+                  adapter: const NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -258,19 +258,19 @@ void main() {
           .buildPage(pageInitParams)));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-mock', skipOffstage: false), findsNWidgets(1));
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(1));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-mock', skipOffstage: false), findsNWidgets(2));
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(2));
 
       await tester.tap(find.byKey(const ValueKey<String>('edit-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-0', skipOffstage: false), findsOneWidget);
       expect(find.text('desc-0-effect', skipOffstage: false), findsOneWidget);
@@ -279,7 +279,7 @@ void main() {
 
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
@@ -297,7 +297,7 @@ void main() {
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list[0].clone();
+              final Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
                   mockState, Action(ToDoListAction.edit, payload: toDo));
@@ -308,7 +308,7 @@ void main() {
           ]));
     });
     testWidgets('effect', (WidgetTester tester) async {
-      Track track = Track();
+      final Track track = Track();
 
       await tester.pumpWidget(TestStub(TestPage<ToDoList, Map>(
               initState: initState,
@@ -317,7 +317,7 @@ void main() {
                 track.append('build', state.clone());
               }),
               dependencies: Dependencies<ToDoList>(
-                  adapter: NoneConn<ToDoList>() +
+                  adapter: const NoneConn<ToDoList>() +
                       TestAdapter<ToDoList>(
                           adapter: toDoListAdapter,
                           reducer: instrumentReducer<ToDoList>(toDoListReducer,
@@ -337,19 +337,19 @@ void main() {
           .buildPage(pageInitParams)));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-mock', skipOffstage: false), findsNWidgets(1));
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(1));
 
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-mock', skipOffstage: false), findsNWidgets(2));
       expect(find.text('desc-mock', skipOffstage: false), findsNWidgets(2));
 
       await tester.tap(find.byKey(const ValueKey<String>('edit-0')));
-      await tester.pump(Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 3));
 
       expect(find.text('title-0', skipOffstage: false), findsOneWidget);
       expect(find.text('desc-0-effect', skipOffstage: false), findsOneWidget);
@@ -358,7 +358,7 @@ void main() {
 
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('build', mockState.clone()),
             Pin('onAdd', mockState.clone()),
             Pin('onReduce', () {
@@ -376,7 +376,7 @@ void main() {
             Pin('build', mockState.clone()),
             Pin('onEdit', mockState.clone()),
             Pin('onReduce', () {
-              Todo toDo = mockState.list[0].clone();
+              final Todo toDo = mockState.list[0].clone();
               toDo.desc = '${toDo.desc}-effect';
               mockState = toDoListReducer(
                   mockState, Action(ToDoListAction.edit, payload: toDo));

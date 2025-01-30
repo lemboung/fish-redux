@@ -47,7 +47,7 @@ ToDoList toDoReducer(ToDoList state, Action action) {
     newState.list
         .firstWhere((Todo toDo) => toDo.id == action.payload,
             orElse: () => null)
-        ?.isDone = true;
+        .isDone = true;
   }
 
   return newState;

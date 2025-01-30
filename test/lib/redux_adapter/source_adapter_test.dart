@@ -3,8 +3,8 @@ import 'package:flutter/material.dart' hide Action, Page;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:test_widgets/source_flow_adapter/action.dart';
 import 'package:test_widgets/source_flow_adapter/component.dart';
-import 'package:test_widgets/source_flow_adapter/source_flow_adapter.dart';
 import 'package:test_widgets/source_flow_adapter/page.dart';
+import 'package:test_widgets/source_flow_adapter/source_flow_adapter.dart';
 import 'package:test_widgets/source_flow_adapter/state.dart';
 import 'package:test_widgets/test_base.dart';
 
@@ -62,7 +62,7 @@ class ToDoComponentNoReducer extends TestComponent<Todo> {
 Dependencies<ToDoList> toDoListDependencies(final Track track,
         {bool noReducer = false}) =>
     Dependencies<ToDoList>(
-        adapter: NoneConn<ToDoList>() +
+        adapter: const NoneConn<ToDoList>() +
             TestSourceFlowAdapter<ToDoList>(
                 pool: <String, AbstractLogic<Todo>>{
                   'toDo': ToDoComponentInstrument(track),
@@ -93,7 +93,7 @@ void main() {
       final TestComponent<Todo> component = ToDoComponentInstrument(track);
       expect(component, isNotNull);
 
-      Widget page = TestPage<ToDoList, Map>(
+      final Widget page = TestPage<ToDoList, Map>(
               initState: initState,
               view: pageView,
               dependencies: toDoListDependencies(track))
@@ -239,7 +239,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('page-build', mockState.clone()),
             Pin('toDo-build', mockState.list[0].clone()),
             Pin('toDo-build', mockState.list[1].clone()),
@@ -305,7 +305,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('page-build', mockState.clone()),
             Pin('toDo-build', mockState.list[0].clone()),
             Pin('toDo-build', mockState.list[1].clone()),
@@ -363,7 +363,7 @@ void main() {
       ToDoList mockState = ToDoList.fromMap(pageInitParams);
       expect(
           track,
-          Track.pins([
+          Track.pins(<Pin>[
             Pin('page-build', mockState.clone()),
             Pin('toDo-build', mockState.list[0].clone()),
             Pin('toDo-build', mockState.list[1].clone()),
@@ -395,7 +395,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('mark-0')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       print(track);
 
@@ -404,7 +404,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo-onToDoBroadcast'), 4);
       expect(track.countOfTag('adapter-onToDoBroadcast'), 1);
@@ -414,7 +414,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo-onToDoBroadcast'), 3);
       expect(track.countOfTag('adapter-onToDoBroadcast'), 1);
@@ -424,7 +424,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo-onToDoBroadcast'), 2);
       expect(track.countOfTag('adapter-onToDoBroadcast'), 1);
@@ -434,7 +434,7 @@ void main() {
 
       track.reset();
       await tester.longPress(find.byKey(const ValueKey<String>('Add')));
-      await tester.pump(Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
 
       expect(track.countOfTag('toDo-onToDoBroadcast'), 3);
       expect(track.countOfTag('adapter-onToDoBroadcast'), 1);

@@ -1,8 +1,5 @@
 import 'package:fish_redux/fish_redux.dart';
 
-import '../redux/redux.dart';
-import '../redux_component/basic.dart';
-import '../redux_connector/redux_connector.dart';
 
 mixin IndexedConnMixin<T, P> on AbstractConnector<T, P> {
   P _cached;
